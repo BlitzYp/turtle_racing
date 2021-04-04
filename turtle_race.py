@@ -20,16 +20,19 @@ def arrange(competitors: List[turtle.Turtle]) -> None:
         i.setpos((-SCREEN_WIDTH / 2) + 30, prev_y)
         prev_y += 130
 
-def race(competitors: List[turtle.Turtle]) -> str:
+def race(competitors: List[turtle.Turtle]):
     current_max = competitors[0].xcor()
     winner = None
+    results = {i.color()[0]: i.xcor() for i in competitors}
     while current_max < (SCREEN_WIDTH / 2) - 30:
         for t in competitors:
             t.fd(randint(5, 20))
             if t.xcor() > current_max:
                 current_max = t.xcor()
                 winner = t.color()[0]
-    return winner
+            results[t.color()[0]] = t.xcor()
+        index = 0
+    return winner, results
 
 if __name__ == "__main__":
     screen = turtle.Screen()
@@ -42,9 +45,12 @@ if __name__ == "__main__":
         if not len(data) or not data in COLORS: 
             screen.clearscreen()
             continue
-        winner = race(competitors)
+        winner, results = race(competitors)
         if winner.lower() == data.lower(): print(f"Your turtle won! The winner turtle was {winner}")
         else: print(f"Your turtle lost! The winner turtle was {winner}")
+        print("RESULTS\n-------------")
+        for i, k in sorted(results.items(), key=lambda x: x[1], reverse=True):
+            print(f"Color: {i}, score: {k}")
         sleep(2)  
         screen.clearscreen() 
     turtle.mainloop()
